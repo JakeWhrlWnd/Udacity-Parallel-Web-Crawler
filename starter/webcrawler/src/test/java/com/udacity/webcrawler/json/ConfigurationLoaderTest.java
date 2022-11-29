@@ -13,19 +13,19 @@ import static org.junit.jupiter.api.Assertions.fail;
 public final class ConfigurationLoaderTest {
 
   @Test
-  public void testBasicJsonConversion() {
+  public void testBasicJsonConversion() throws IOException {
     String json = "{ " +
-        "\"startPages\": [\"http://example.com\", \"http://example.com/foo\"], " +
-        "\"ignoredUrls\": [\"http://example\\\\.com/.*\"], " +
-        "\"ignoredWords\": [\"^.{1,3}$\"], " +
-        "\"parallelism\": 4, " +
-        "\"implementationOverride\": \"fully.qualified.OverrideClass\", " +
-        "\"maxDepth\": 100, " +
-        "\"timeoutSeconds\": 10, " +
-        "\"popularWordCount\": 5, " +
-        "\"profileOutputPath\": \"profileOutput.txt\", " +
-        "\"resultPath\": \"resultPath.json\" " +
-        " }";
+            "\"startPages\": [\"http://example.com\", \"http://example.com/foo\"], " +
+            "\"ignoredUrls\": [\"http://example\\\\.com/.*\"], " +
+            "\"ignoredWords\": [\"^.{1,3}$\"], " +
+            "\"parallelism\": 4, " +
+            "\"implementationOverride\": \"fully.qualified.OverrideClass\", " +
+            "\"maxDepth\": 100, " +
+            "\"timeoutSeconds\": 10, " +
+            "\"popularWordCount\": 5, " +
+            "\"profileOutputPath\": \"profileOutput.txt\", " +
+            "\"resultPath\": \"resultPath.json\" " +
+            " }";
 
     Reader reader = new StringReader(json);
     CrawlerConfiguration config = ConfigurationLoader.read(reader);
@@ -36,7 +36,7 @@ public final class ConfigurationLoaderTest {
     }
 
     assertThat(config.getStartPages())
-        .containsExactly("http://example.com", "http://example.com/foo").inOrder();
+            .containsExactly("http://example.com", "http://example.com/foo").inOrder();
     assertThat(config.getIgnoredUrls()).hasSize(1);
     assertThat(config.getIgnoredUrls().get(0).pattern()).isEqualTo("http://example\\.com/.*");
     assertThat(config.getIgnoredWords()).hasSize(1);
@@ -51,13 +51,13 @@ public final class ConfigurationLoaderTest {
   }
 
   @Test
-  public void testOptionalOptions() {
+  public void testOptionalOptions() throws IOException {
     // Same as above, but without any explicit implementationOverride or parallelism.
     String json = "{ " +
-        "\"maxDepth\": 100, " +
-        "\"timeoutSeconds\": 10, " +
-        "\"popularWordCount\": 5 " +
-        " }";
+            "\"maxDepth\": 100, " +
+            "\"timeoutSeconds\": 10, " +
+            "\"popularWordCount\": 5 " +
+            " }";
 
     Reader reader = new StringReader(json);
     CrawlerConfiguration config = ConfigurationLoader.read(reader);
