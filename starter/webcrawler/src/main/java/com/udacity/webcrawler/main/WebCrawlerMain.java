@@ -42,6 +42,7 @@ public final class WebCrawlerMain {
     } else {
       Path path = Path.of(config.getResultPath());
       resultWriter.write(path);
+      writer.flush();
     }
     // TODO: Write the profile data to a text file (or System.out if the file name is empty)
     if (config.getProfileOutputPath().isEmpty()) {
@@ -49,6 +50,7 @@ public final class WebCrawlerMain {
     } else {
       Path path = Path.of(config.getProfileOutputPath());
       profiler.writeData(path);
+      writer.flush();
     }
   }
 

@@ -25,15 +25,22 @@ final class ParallelWebCrawler implements WebCrawler {
   private final int popularWordCount;
   private final ForkJoinPool pool;
 
+  private final PageParserFactory parserFactory;
+  private final int maxDepth;
+  private final List<Pattern> ignoredUrls;
+
+  public static Lock lock = new ReentrantLock();
+
+
   @Inject
   ParallelWebCrawler(
-      Clock clock,
-      PageParserFactory parserFactory,
-      @Timeout Duration timeout,
-      @PopularWordCount int popularWordCount,
-      @MaxDepth int maxDepth,
-      @IgnoredUrls List<Pattern> ignoredUrls,
-      @TargetParallelism int threadCount) {
+          Clock clock,
+          PageParserFactory parserFactory,
+          @Timeout Duration timeout,
+          @PopularWordCount int popularWordCount,
+          @MaxDepth int maxDepth,
+          @IgnoredUrls List<Pattern> ignoredUrls,
+          @TargetParallelism int threadCount) {
     this.clock = clock;
     this.parserFactory = parserFactory;
     this.timeout = timeout;
@@ -86,13 +93,21 @@ final class ParallelWebCrawler implements WebCrawler {
       if (!visitedUrls.add(url)) {
         return false;
       }
+      try {
+        lock.lock();
+        if (visitedUrls.contains(url)) {
+          return false;
+        }
+        visitedUrls.add(url);
+      } catch (Exception e) {
+        e.printStackTrace();
+      } finally {
+        lock.unlock();
+      }
+
       PageParser.Result result = parserFactory.get(url).parse();
       for (ConcurrentMap.Entry<String, Integer> e : result.getWordCounts().entrySet()) {
-        if (counts.containsKey(e.getKey())) {
-          counts.put(e.getKey(), e.getValue() + counts.get(e.getKey()));
-        } else {
-          counts.put(e.getKey(), e.getValue());
-        }
+        counts.compute(e.getKey(), (k, v) -> (v == null) ? e.getValue() : e.getValue() + v);
       }
       List<InternalCrawl> subtasks = new ArrayList();
       for (String list : result.getLinks()) {
