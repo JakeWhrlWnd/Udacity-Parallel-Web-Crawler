@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.Objects;
 
 /**
@@ -54,7 +55,7 @@ public final class CrawlResultWriter {
     // TODO: Fill in this method.
     ObjectMapper mapper = new ObjectMapper();
     mapper.disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
-    mapper.disable(JsonGenerator.Feature.AUTO_CLOSE_SOURCE);
+    mapper.disable(JsonParser.Feature.AUTO_CLOSE_SOURCE);
     try {
       mapper.writeValue(writer, result);
     } catch (Exception ex) {

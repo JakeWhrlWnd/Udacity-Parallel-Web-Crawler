@@ -4,7 +4,7 @@ import com.udacity.webcrawler.json.CrawlResult;
 import com.udacity.webcrawler.parser.PageParser;
 import com.udacity.webcrawler.parser.PageParserFactory;
 
-mport javax.inject.Inject;
+import javax.inject.Inject;
 import javax.inject.Provider;
 import java.time.Clock;
 import java.time.Duration;
@@ -53,7 +53,7 @@ final class ParallelWebCrawler implements WebCrawler {
   @Override
   public CrawlResult crawl(List<String> startingUrls) {
     Instant deadline = clock.instant().plus(timeout);
-    ConcurrentMap<String, Interger> counts = new ConcurrentHashMap<>();
+    ConcurrentMap<String, Integer> counts = new ConcurrentHashMap<>();
     ConcurrentSkipListSet<String> visitedUrls = new ConcurrentSkipListSet<>();
     for (String url : startingUrls) {
       pool.invoke(new InternalCrawl(url, deadline, maxDepth, counts, visitedUrls));
@@ -73,7 +73,7 @@ final class ParallelWebCrawler implements WebCrawler {
     private ConcurrentMap<String, Integer> counts;
     private ConcurrentSkipListSet<String> visitedUrls;
 
-    public InternalCrawl(String url, Instant deadline, int maxDepth, ConcurrentMap<String, Interger> counts, ConcurrentSkipListSet<String> visitedUrls) {
+    public InternalCrawl(String url, Instant deadline, int maxDepth, ConcurrentMap<String, Integer> counts, ConcurrentSkipListSet<String> visitedUrls) {
       this.url = url;
       this.deadline = deadline;
       this.maxDepth = maxDepth;
@@ -111,7 +111,7 @@ final class ParallelWebCrawler implements WebCrawler {
       }
       List<InternalCrawl> subtasks = new ArrayList();
       for (String list : result.getLinks()) {
-        subtasks.add(new InternalCrawl(link, deadline, maxDepth - 1, counts, visitedUrls));
+        subtasks.add(new InternalCrawl(url, deadline, maxDepth - 1, counts, visitedUrls));
       }
       invokeAll(subtasks);
       return true;
