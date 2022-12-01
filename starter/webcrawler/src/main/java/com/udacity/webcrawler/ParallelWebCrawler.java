@@ -1,18 +1,18 @@
 package com.udacity.webcrawler;
 
 import com.udacity.webcrawler.json.CrawlResult;
+import com.udacity.webcrawler.parser.PageParser;
+import com.udacity.webcrawler.parser.PageParserFactory;
 
-import javax.inject.Inject;
+mport javax.inject.Inject;
 import javax.inject.Provider;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.ForkJoinPool;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -29,7 +29,7 @@ final class ParallelWebCrawler implements WebCrawler {
   private final int maxDepth;
   private final List<Pattern> ignoredUrls;
 
-  public static Lock lock = new ReentrantLock();
+  public ReentrantLock lock = new ReentrantLock();
 
 
   @Inject

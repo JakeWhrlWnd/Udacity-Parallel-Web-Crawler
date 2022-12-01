@@ -31,12 +31,16 @@ public final class CrawlResultWriter {
    *
    * @param path the file path where the crawl result data should be written.
    */
-  public void write(Path path) IOException{
+  public void write(Path path) {
     // This is here to get rid of the unused variable warning.
     Objects.requireNonNull(path);
     // TODO: Fill in this method.
-      Writer writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.CREATE);
+    try {
+      Writer writer = Files.newBufferedWriter(path, StandardOpenOption.CREATE);
       write(writer);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   /**
@@ -44,12 +48,17 @@ public final class CrawlResultWriter {
    *
    * @param writer the destination where the crawl result data should be written.
    */
-  public void write(Writer writer) IOException{
+  public void write(Writer writer) {
     // This is here to get rid of the unused variable warning.
     Objects.requireNonNull(writer);
     // TODO: Fill in this method.
     ObjectMapper mapper = new ObjectMapper();
     mapper.disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
-    mapper.writeValue(writer, result);
+    mapper.disable(JsonGenerator.Feature.AUTO_CLOSE_SOURCE);
+    try {
+      mapper.writeValue(writer, result);
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
   }
 }
