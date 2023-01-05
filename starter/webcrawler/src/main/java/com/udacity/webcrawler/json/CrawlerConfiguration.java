@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * A data class that represents the configuration of a single web crawl.
@@ -329,9 +328,9 @@ public final class CrawlerConfiguration {
       }
 
       return new CrawlerConfiguration(
-              startPages.stream().collect(Collectors.toUnmodifiableList()),
-              ignoredUrls.stream().map(Pattern::compile).collect(Collectors.toUnmodifiableList()),
-              ignoredWords.stream().map(Pattern::compile).collect(Collectors.toUnmodifiableList()),
+              startPages.stream().toList(),
+              ignoredUrls.stream().map(Pattern::compile).toList(),
+              ignoredWords.stream().map(Pattern::compile).toList(),
               parallelism,
               implementationOverride,
               maxDepth,

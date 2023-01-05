@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -52,9 +51,10 @@ public final class ConfigurationLoader {
     ObjectMapper objectMapper = new ObjectMapper();
     objectMapper.disable(JsonParser.Feature.AUTO_CLOSE_SOURCE);
     try {
-      return objectMapper.readValue(reader, CrawlerConfiguration.Builder.class).build();
-    } catch (IOException e) {
-      throw new RuntimeException(e);
+      return objectMapper.readValue(reader, CrawlerConfiguration.class);
+    } catch (Exception e) {
+      e.printStackTrace();
+      return new CrawlerConfiguration.Builder().build();
     }
   }
 }
