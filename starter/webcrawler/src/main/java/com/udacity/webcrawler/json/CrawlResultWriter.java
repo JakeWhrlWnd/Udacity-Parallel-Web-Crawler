@@ -1,13 +1,14 @@
 package com.udacity.webcrawler.json;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.Objects;
 
 /**
@@ -35,10 +36,10 @@ public final class CrawlResultWriter {
     // This is here to get rid of the unused variable warning.
     Objects.requireNonNull(path);
     // TODO: Fill in this method.
-    try (Writer writer = Files.newBufferedWriter(path, StandardOpenOption.CREATE)){
+    try (Writer writer = Files.newBufferedWriter(path, StandardOpenOption.CREATE, StandardOpenOption.APPEND)){
       write(writer);
     } catch (IOException e) {
-      e.printStackTrace;
+      e.printStackTrace();
     }
   }
 
@@ -57,7 +58,7 @@ public final class CrawlResultWriter {
     try {
       mapper.writeValue(writer, result);
     } catch (IOException e) {
-      e.printStackTrace;
+      e.printStackTrace();
     }
   }
 }

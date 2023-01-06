@@ -1,5 +1,6 @@
 package com.udacity.webcrawler.main;
 
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.file.Path;
@@ -44,9 +45,12 @@ public final class WebCrawlerMain {
       Path path = Paths.get(resultPath);
       resultWriter.write(path);
     } else {
-      Writer outputWriter = new OutputStreamWriter(System.out);
-      resultWriter.write(outputWriter);
-      writer.flush();
+      try (Writer outputWriter = new OutputStreamWriter(System.out)) {
+        resultWriter.write(outputWriter);
+        outputWriter.flush();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
     }
     // TODO: Write the profile data to a text file (or System.out if the file name is empty)
     String outputPath = config.getProfileOutputPath();
@@ -55,9 +59,12 @@ public final class WebCrawlerMain {
       Path path = Paths.get(config.getProfileOutputPath());
       profiler.writeData(path);
     } else {
-      Writer outputWriter = new OutputStreamWriter(System.out);
-      profiler.writeData(outputWriter);
-      outputWriter.flush();
+      try (Writer outputWriter = new OutputStreamWriter(System.out)) {
+        profiler.writeData(outputWriter);
+        outputWriter.flush();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
     }
   }
 
